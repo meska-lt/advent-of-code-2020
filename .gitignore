@@ -1,2 +1,4 @@
-xcuserdata/
+xcuserdata
+!default.xcworkspace
+*.xcworkspacedata
 
