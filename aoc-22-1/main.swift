@@ -56,29 +56,45 @@ private func combatWinningDeck(in startingDecks: [Deck]) -> Deck {
 
     while !decks.contains(where: { $0.cards.count == totalCardAmount }) {
         roundIndex += 1
-        print("-- Round \(roundIndex) --")
-        var cardsOnTable: [Int : Int] = [:]
-
-        for deckIndex in 0 ..< decks.count {
-            print("Player \(decks[deckIndex].playerId)'s deck: \(decks[deckIndex].cards)")
-        }
-
-        for deckIndex in 0 ..< decks.count {
-            let topCard = decks[deckIndex].cards.first!
-            print("Player \(decks[deckIndex].playerId) plays: \(topCard)")
-            cardsOnTable[topCard] = deckIndex
-            decks[deckIndex].cards.removeFirst()
-        }
-
-        let topCard = cardsOnTable.keys.max()!
-        let winnerDeckIndex = cardsOnTable[topCard]!
-        print("Player \(decks[winnerDeckIndex].playerId) wins the rond!")
-        decks[winnerDeckIndex].cards.append(topCard)
-        cardsOnTable.removeValue(forKey: topCard)
-        decks[winnerDeckIndex].cards.append(contentsOf: cardsOnTable.keys)
+        decks = decksAfterCombatRound(decks)
     }
 
     return decks.first(where: { $0.cards.count == totalCardAmount })!
+}
+
+private func decksAfterCombatRound(_ startingDecks: [Deck], printLog: Bool = true) -> [Deck] {
+    var decks = startingDecks
+    var cardsOnTable: [Int : Int] = [:]
+
+    if printLog {
+        for deckIndex in 0 ..< decks.count {
+            print("Player \(decks[deckIndex].playerId)'s deck: \(decks[deckIndex].cards)")
+        }
+    }
+
+    for deckIndex in 0 ..< decks.count {
+        let topCard = decks[deckIndex].cards.first!
+
+        if printLog {
+            print("Player \(decks[deckIndex].playerId) plays: \(topCard)")
+        }
+
+        cardsOnTable[topCard] = deckIndex
+        decks[deckIndex].cards.removeFirst()
+    }
+
+    let topCard = cardsOnTable.keys.max()!
+    let winnerDeckIndex = cardsOnTable[topCard]!
+
+    if printLog {
+        print("Player \(decks[winnerDeckIndex].playerId) wins the rond!")
+    }
+
+    decks[winnerDeckIndex].cards.append(topCard)
+    cardsOnTable.removeValue(forKey: topCard)
+    decks[winnerDeckIndex].cards.append(contentsOf: cardsOnTable.keys)
+    
+    return decks
 }
 
 private func score(of deckCards: [Int]) -> Int {
